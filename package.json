@@ -1,0 +1,22 @@
+{
+  "name": "telfa",
+  "version": "1.0.0",
+  "description": "Nothing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yep606/telfa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yep606/telfa/issues"
+  },
+  "homepage": "https://github.com/yep606/telfa#readme",
+  "dependencies": {
+    "puppeteer": "^3.3.0"
+  }
+}
