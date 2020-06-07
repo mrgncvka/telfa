@@ -2,7 +2,7 @@
   "name": "telfa",
   "version": "1.0.0",
   "description": "Nothing",
-  "main": "index.js",
+  "main": "src/main/resources/static/js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/yep606/telfa#readme",
   "dependencies": {
-    "puppeteer": "^3.3.0"
+    "dotenv": "^8.2.0",
+    "puppeteer": "^3.3.0",
+    "telegraf": "^3.38.0"
   }
 }
