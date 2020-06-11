@@ -6,6 +6,8 @@ const ig = require('./instagram');
 
     await ig.login("***", "***");
 
+    await ig.likeTagsProcess(['фотограф','фото','питер']);
+
     debugger;
 
 })()

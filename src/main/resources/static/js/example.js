@@ -23,8 +23,17 @@ bot.command("done", async ctx => {
 
     return ctx.reply("Testing connection")
 
-})
+});
+
+bot.command("drop", ctx => {
+    user.login = "";
+    user.password = "";
+
+    return ctx.reply("Dropped login and password")
+});
+
 // bot.help((ctx) => ctx.reply('Send me a sticker'))
+
 bot.on('text', (ctx) => {
 
     if(ready && user.login === "")
