@@ -24,8 +24,11 @@ const instagram = {
 
         await loginButton[0].click();
 
-        await instagram.page.waitFor(5000);
-        await instagram.page.waitFor('a > svg[aria-label="Direct"]');
+        await instagram.page.waitFor(10000);
+
+       let isReady = await instagram.page.$('a > svg[aria-label="Direct"]');
+
+       return !!isReady;
     },
 
     likeTagsProcess: async (tags = []) => {
