@@ -15,7 +15,7 @@ public class User {
     private String username;
     private String firstName;
     private String lastName;
-    private boolean isBot;
+    private boolean bot;
 
 
 

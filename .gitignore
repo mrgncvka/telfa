@@ -3,5 +3,5 @@
 node_modules
 package-lock.json
 *.DS_Store
-app.properties
+application.properties
 .env
