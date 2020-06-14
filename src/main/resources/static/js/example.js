@@ -8,12 +8,13 @@ let user = {
     password: "",
 };
 let ready = false;
+const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and password, " +
+    "After all write /done";
 
 bot.start((ctx) => {
     if (!ready) {
         ready = !ready;
-        return ctx.reply("Hey, I'm Telfa! Send me your Instagram login and password, " +
-            "After all write /done")
+        return ctx.reply(welcomeMessage)
     }
     else
         return ctx.reply("We are already chatting! :)");
