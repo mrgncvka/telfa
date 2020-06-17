@@ -5,6 +5,8 @@ import base.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/user")
 public class MainController {
@@ -21,9 +23,16 @@ public class MainController {
         return userRepo.save(user);
     }
 
+    @GetMapping("/id/{id}")
+    public User getUser(@PathVariable Long id){
+        Optional<User> user = userRepo.findById(id);
+        return user.orElse(null);
+    }
+
     @GetMapping("/hello")
     public String test(){
-        return "Hey!";
+        return "Hello!";
     }
+
 
 }
