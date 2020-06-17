@@ -37,15 +37,14 @@ bot.command("done", async ctx => {
     let isReady = await ig.login(user.username, user.password);
 
     if (isReady){
-      let res =  await axios({
-            method: 'get',
-            url: 'https://192.168.3.10:8080/user/hello',
-        });
-      console.log(res.data);
+        let res =  await axios.post('http://localhost:8080/user/add', user);
+        console.log(res.data);
+
         return ctx.reply("Everything's fine!");
     }
     else
         return ctx.reply("Error :( Login or password was incorrect. \n Write /drop and try again.");
+
 
 });
 
