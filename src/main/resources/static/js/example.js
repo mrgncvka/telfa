@@ -1,10 +1,15 @@
 require('dotenv').config();
 const ig = require('./instagram');
 const { Telegraf } = require('telegraf')
+const axios = require('axios');
 
 const bot = new Telegraf(process.env.TOKEN);
 let user = {
-    login: "",
+    id: -1,
+    firstName: "",
+    lastName: "",
+    bot: false,
+    username: "",
     password: "",
 };
 let ready = false;
@@ -12,7 +17,12 @@ const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and passwor
     "After all write /done";
 
 bot.start((ctx) => {
+    console.log(ctx.from);
     if (!ready) {
+        user.id = ctx.from.id;
+        user.firstName = ctx.from.first_name;
+        user.lastName = ctx.from.last_name;
+        user.bot = ctx.from.is_bot;
         ready = !ready;
         return ctx.reply(welcomeMessage)
     }
@@ -24,38 +34,43 @@ bot.command("done", async ctx => {
 
     await ig.initialize();
 
-    let isReady = await ig.login(user.login, user.password);
+    let isReady = await ig.login(user.username, user.password);
 
-    if (isReady)
+    if (isReady){
+        let res =  await axios.post('http://localhost:8080/user/add', user);
+        console.log(res.data);
+
         return ctx.reply("Everything's fine!");
+    }
     else
         return ctx.reply("Error :( Login or password was incorrect. \n Write /drop and try again.");
+
 
 });
 
 bot.command("drop", ctx => {
 
-    user.login = "";
+    user.username = "";
     user.password = "";
 
     return ctx.reply("Dropped login and password")
 });
 
+bot.hears('hi', async (ctx) => {
+    await ctx.reply(`Hey, ${ctx.from.first_name}`);
+});
+
+
 // bot.help((ctx) => ctx.reply('Send me a sticker'))
 
 bot.on('text', (ctx) => {
 
-    if(ready && user.login === "")
-        user.login = ctx.message.text;
+    if(ready && user.username === "")
+        user.username = ctx.message.text;
     else if(ready && user.password === "")
         user.password = ctx.message.text;
 
     return ctx.reply('👍')
 });
 
-
-bot.hears('hi', async (ctx) => {
-    await ctx.reply('Hey there');
-
-});
 bot.launch();

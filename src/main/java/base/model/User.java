@@ -11,11 +11,12 @@ public class User {
 
     @Id
     private Long id;
-
-    private String username;
     private String firstName;
     private String lastName;
     private boolean bot;
+
+    private String username;
+    private String password;
 
 
 

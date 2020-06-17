@@ -3,10 +3,7 @@ package base.controller;
 import base.model.User;
 import base.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -22,6 +19,11 @@ public class MainController {
     @PostMapping("/add")
     public User add(@RequestBody User user){
         return userRepo.save(user);
+    }
+
+    @GetMapping("/hello")
+    public String test(){
+        return "Hey!";
     }
 
 }
