@@ -2,6 +2,8 @@ require('dotenv').config();
 const ig = require('./instagram');
 const { Telegraf } = require('telegraf')
 const axios = require('axios');
+const Extra = require('telegraf/extra')
+const Markup = require('telegraf/markup')
 
 const bot = new Telegraf(process.env.TOKEN);
 let user = {
@@ -17,7 +19,7 @@ const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and passwor
     "After all write /done";
 
 bot.start((ctx) => {
-    console.log(ctx.from);
+    // console.log(ctx.from);
     if (!ready) {
         user.id = ctx.from.id;
         user.firstName = ctx.from.first_name;
@@ -55,6 +57,26 @@ bot.command("drop", ctx => {
 
     return ctx.reply("Dropped login and password")
 });
+
+bot.command('onetime', ({ reply }) =>
+    reply('One time keyboard', Markup
+        .keyboard(['/simple', '/inline', '/pyramid'])
+        .oneTime()
+        .resize()
+        .extra()
+    )
+)
+
+bot.command('special', (ctx) => {
+    return ctx.reply('Special buttons keyboard', Extra.markup((markup) => {
+        return markup.resize()
+            .keyboard([
+                markup.contactRequestButton('Send contact'),
+                markup.locationRequestButton('Send location')
+            ])
+    }))
+})
+
 
 bot.hears('hi', async (ctx) => {
     await ctx.reply(`Hey, ${ctx.from.first_name}`);
