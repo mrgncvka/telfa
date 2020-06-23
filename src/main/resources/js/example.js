@@ -20,7 +20,7 @@ const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and passwor
 
 bot.start(async (ctx) => {
 
-    let result = await axios.get(`http://localhost:8080/user/id/${ctx.from.id}`);
+    let result = await axios.get(`https://telfo.herokuapp.com/user/id/${ctx.from.id}`);
     if (typeof result.data === "object")
         return ctx.reply(` Hey, ${ctx.from.first_name}`, Extra.HTML().markup((m) =>
             m.inlineKeyboard([
@@ -44,7 +44,7 @@ bot.command("done", async ctx => {
     let isReady = await ig.login(user.username, user.password);
 
     if (isReady) {
-        let res = await axios.post('http://localhost:8080/user/add', user);
+        let res = await axios.post('https://telfo.herokuapp.com/user/add', user);
         console.log(res.data);
 
         return ctx.reply("Everything's fine!");
