@@ -12,11 +12,12 @@ public class User {
     @Id
     private Long id;
     private String firstName;
-    private String lastName;
+    private String authPassword;
     private boolean bot;
 
+    private String token;
     private String username;
-    private String password;
+    private String instPassword;
 
 
 
