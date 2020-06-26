@@ -21,8 +21,9 @@ const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and passwor
 bot.start(async (ctx) => {
 
     let result = await axios.get(`https://telfo.herokuapp.com/user/id/${ctx.from.id}`);
+    console.log(result.data)
     if (typeof result.data === "object")
-        return ctx.reply(` Hey, ${ctx.from.first_name}`, Extra.HTML().markup((m) =>
+        return ctx.reply(`Hey, ${ctx.from.first_name}`, Extra.HTML().markup((m) =>
             m.inlineKeyboard([
                 m.callbackButton('Coke', 'Coke'),
                 m.callbackButton('Pepsi', 'Pepsi')
@@ -45,8 +46,6 @@ bot.command("done", async ctx => {
 
     if (isReady) {
         let res = await axios.post('https://telfo.herokuapp.com/user/add', user);
-        console.log(res.data);
-
         return ctx.reply("Everything's fine!");
     } else
         return ctx.reply("Error :( Login or password was incorrect. \n Write /drop and try again.");
