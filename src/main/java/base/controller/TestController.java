@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping
-    public String test(Model model){
-        model.addAttribute("name", "Ilya");
-        return "index";
+    @RequestMapping({"/test"})
+    public String hello(){
+
+        return "Hello World!";
+
     }
 
 }
