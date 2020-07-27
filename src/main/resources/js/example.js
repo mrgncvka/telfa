@@ -2,10 +2,13 @@ require('dotenv').config();
 const ig = require('./instagram');
 const {Telegraf} = require('telegraf')
 const axios = require('axios');
-const Extra = require('telegraf/extra')
-const Markup = require('telegraf/markup')
-
+const session = require('telegraf/session');
 const bot = new Telegraf(process.env.TOKEN);
+const Stage = require('telegraf/stage')
+const Scene = require('telegraf/scenes/base')
+const stage = new Stage();
+bot.use(session())
+bot.use(stage.middleware())
 let user = {
     id: -1,
     firstName: "",
@@ -23,11 +26,7 @@ bot.start(async (ctx) => {
     let result = await axios.get(`https://telfo.herokuapp.com/user/id/${ctx.from.id}`);
     console.log(result.data)
     if (typeof result.data === "object")
-        return ctx.reply(`Hey, ${ctx.from.first_name}`, Extra.HTML().markup((m) =>
-            m.inlineKeyboard([
-                m.callbackButton('Coke', 'Coke'),
-                m.callbackButton('Pepsi', 'Pepsi')
-            ])));
+        return ctx.reply(`Hey, ${ctx.from.first_name}`);
     else {
         user.id = ctx.from.id;
         user.firstName = ctx.from.first_name;

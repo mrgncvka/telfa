@@ -29,10 +29,7 @@ public class TestController {
 
     @RequestMapping("/test")
     public String hello(@AuthenticationPrincipal User user){
-
-
         return "Hello" + user.getUsername();
-
     }
 
     @PostMapping("/authenticate")
