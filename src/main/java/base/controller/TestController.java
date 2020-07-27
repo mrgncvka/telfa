@@ -2,6 +2,7 @@ package base.controller;
 
 import base.model.AuthenticationRequest;
 import base.model.AuthenticationResponse;
+import base.model.User;
 import base.service.UserService;
 import base.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,14 +28,15 @@ public class TestController {
     private JwtUtil jwtUtil;
 
     @RequestMapping("/test")
-    public String hello(){
-        return "Hello World!";
+    public String hello(@AuthenticationPrincipal User user){
+
+
+        return "Hello" + user.getUsername();
 
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
