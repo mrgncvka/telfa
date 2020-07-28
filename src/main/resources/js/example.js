@@ -6,35 +6,55 @@ const session = require('telegraf/session');
 const bot = new Telegraf(process.env.TOKEN);
 const Stage = require('telegraf/stage')
 const Scene = require('telegraf/scenes/base')
-const stage = new Stage();
+const { leave } = Stage
+var s;
+
+// Greeter scene
+const greeter = new Scene('greeter')
+greeter.enter((ctx) => ctx.reply('Hi'))
+greeter.leave((ctx) => ctx.reply('Bye'))
+greeter.hears("leave", leave())
+greeter.on('message', (ctx) => ctx.reply(ctx.session.bla + "and num" + s))
+
+// Create scene manager
+const stage = new Stage()
+stage.command('cancel', leave())
+
+// Scene registration
+stage.register(greeter)
+
 bot.use(session())
 bot.use(stage.middleware())
-let user = {
-    id: -1,
-    firstName: "",
-    lastName: "",
-    bot: false,
-    username: "",
-    password: "",
-};
+
+
 let ready = false;
 const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and password, " +
     "After all write /done";
 
 bot.start(async (ctx) => {
 
-    let result = await axios.get(`https://telfo.herokuapp.com/user/id/${ctx.from.id}`);
-    console.log(result.data)
-    if (typeof result.data === "object")
-        return ctx.reply(`Hey, ${ctx.from.first_name}`);
-    else {
-        user.id = ctx.from.id;
-        user.firstName = ctx.from.first_name;
-        user.lastName = ctx.from.last_name;
-        user.bot = ctx.from.is_bot;
-        ready = !ready;
-        return ctx.reply(welcomeMessage)
-    }
+   let res = await axios.post('https://telfo.herokuapp.com/authenticate', {
+       "username": "",
+       "password": ""})
+
+    console.log(res.data.jwt)
+
+    let final = await axios({
+            method: 'get',
+            url: 'https://telfo.herokuapp.com/test',
+            headers: {
+                "Authentication": `Bearer ${res.data.jwt}`
+            }
+        }
+    )
+    console.log(final)
+    // if(ctx.session.jwt === undefined)
+    //     return ctx.reply(welcomeMessage);
+    // else
+
+
+
+
 });
 
 bot.command("done", async ctx => {
@@ -54,10 +74,12 @@ bot.command("done", async ctx => {
 
 bot.command("drop", ctx => {
 
-    user.username = "";
-    user.password = "";
-
-    return ctx.reply("Dropped login and password")
+    ctx.session.bla = 1;
+    s = 20;
+    // user.username = "";
+    // user.password = "";
+    //
+    // return ctx.reply("Dropped login and password")
 });
 
 

@@ -23,16 +23,4 @@ public class MainController {
         return userRepo.save(user);
     }
 
-    @GetMapping("/id/{id}")
-    public User getUser(@PathVariable Long id){
-        Optional<User> user = userRepo.findById(id);
-        return user.orElse(null);
-    }
-
-    @GetMapping("/hello")
-    public String test(){
-        return "Hello!";
-    }
-
-
 }
