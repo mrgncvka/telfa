@@ -33,9 +33,24 @@ const welcomeMessage = "Hey, I'm Telfa! Send me your Instagram login and passwor
 
 bot.start(async (ctx) => {
 
-    if(ctx.session.jwt === undefined)
-        return ctx.reply(welcomeMessage);
-    else
+   let res = await axios.post('https://telfo.herokuapp.com/authenticate', {
+       "username": "",
+       "password": ""})
+
+    console.log(res.data.jwt)
+
+    let final = await axios({
+            method: 'get',
+            url: 'https://telfo.herokuapp.com/test',
+            headers: {
+                "Authentication": `Bearer ${res.data.jwt}`
+            }
+        }
+    )
+    console.log(final)
+    // if(ctx.session.jwt === undefined)
+    //     return ctx.reply(welcomeMessage);
+    // else
 
 
 
