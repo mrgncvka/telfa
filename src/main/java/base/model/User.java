@@ -20,7 +20,7 @@ public class User implements UserDetails {
     @Id
     private Long id;
     private String username;
-    @JsonIgnore
+//    @JsonIgnore
     private String password;
     private boolean bot;
 

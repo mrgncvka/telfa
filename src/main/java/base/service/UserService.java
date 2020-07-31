@@ -2,6 +2,7 @@ package base.service;
 
 import base.model.User;
 import base.repo.UserRepo;
+import base.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,32 +15,37 @@ public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    private UserService(UserRepo userRepo, PasswordEncoder bcryptEncoder) {
+    private UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepo = userRepo;
-        this.passwordEncoder = bcryptEncoder;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findUserByUsername(username);
-
-        if(user == null)
+        if (user == null)
             throw new UsernameNotFoundException("Not found");
         return user;
     }
 
-    public User save(User user){
-        User newUser = new User();
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.save(newUser);
+    public boolean save(User user) {
+        User userFromDB = userRepo.findUserById(user.getId());
+        if (userFromDB != null)
+            return false;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepo.save(user);
+        return true;
     }
 
-    public void setToken(User user, String token) {
+    public String processToken(User user) {
+        String token = jwtUtil.generateToken(user);
         user.setToken(token);
         userRepo.save(user);
+        return token;
     }
 
 }

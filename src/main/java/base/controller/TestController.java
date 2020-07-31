@@ -11,10 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TestController {
@@ -28,32 +27,30 @@ public class TestController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        final String username = authenticationRequest.getUsername();
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(username, authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
             throw new Exception("Bad credentials", e);
         }
+        User user = (User) userDetailsService.loadUserByUsername(username);
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(authenticationRequest.getUsername());
-
-        if(!jwtUtil.validateToken(user.getToken(), userDetails)) {
-            final String token = jwtUtil.generateToken(userDetails);
-            userDetailsService.setToken(user, token);
+        if (!jwtUtil.validateToken(user.getToken(), user)) {
+            String token = userDetailsService.processToken(user);
             return ResponseEntity.ok(new AuthenticationResponse(token));
-        }
-        else
+        } else
             return new ResponseEntity("Your last token is not expired yet", HttpStatus.NOT_ACCEPTABLE);
 
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> saveUser(@RequestBody User user){
-        return ResponseEntity.ok(userDetailsService.save(user));
+    public ResponseEntity<?> saveUser(@RequestBody User user) {
+        if (userDetailsService.save(user))
+            return ResponseEntity.ok("User: " + user.getUsername() + " saved!");
+        else
+            return new ResponseEntity("Something went wrong", HttpStatus.NOT_ACCEPTABLE);
     }
 
 
