@@ -13,14 +13,13 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
-    private final PasswordEncoder bcryptEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserService(UserRepo userRepo, PasswordEncoder bcryptEncoder) {
         this.userRepo = userRepo;
-        this.bcryptEncoder = bcryptEncoder;
+        this.passwordEncoder = bcryptEncoder;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -29,16 +28,18 @@ public class UserService implements UserDetailsService {
         if(user == null)
             throw new UsernameNotFoundException("Not found");
         return user;
-
     }
 
     public User save(User user){
-
         User newUser = new User();
         newUser.setUsername(user.getUsername());
-        newUser.setPassword(bcryptEncoder.encode(user.getPassword()));
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepo.save(newUser);
-
-
     }
+
+    public void setToken(User user, String token) {
+        user.setToken(token);
+        userRepo.save(user);
+    }
+
 }

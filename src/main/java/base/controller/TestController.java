@@ -6,11 +6,13 @@ import base.model.User;
 import base.service.UserService;
 import base.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +26,6 @@ public class TestController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @RequestMapping("/test")
-    public String hello(@AuthenticationPrincipal User user){
-        return "Hello" + user.getUsername();
-    }
-
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
@@ -39,12 +36,18 @@ public class TestController {
             throw new Exception("Bad credentials", e);
         }
 
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
 
-        final String token = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthenticationResponse(token));
+        if(!jwtUtil.validateToken(user.getToken(), userDetails)) {
+            final String token = jwtUtil.generateToken(userDetails);
+            userDetailsService.setToken(user, token);
+            return ResponseEntity.ok(new AuthenticationResponse(token));
+        }
+        else
+            return new ResponseEntity("Your last token is not expired yet", HttpStatus.NOT_ACCEPTABLE);
 
     }
 
