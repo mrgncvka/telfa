@@ -1,4 +1,6 @@
 require('dotenv').config();
+require("babel-core/register");
+require("babel-polyfill");
 const ig = require('./instagram');
 const {Telegraf} = require('telegraf')
 const axios = require('axios');

@@ -1,6 +1,7 @@
 package base.model;
 
 import base.service.UserService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,7 @@ public class User implements UserDetails {
     @Id
     private Long id;
     private String username;
+//    @JsonIgnore
     private String password;
     private boolean bot;
 
