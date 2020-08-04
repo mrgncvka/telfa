@@ -70,6 +70,11 @@
             <version>4.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.frontend</groupId>
+            <artifactId>front</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
