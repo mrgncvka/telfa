@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/user")
 public class MainController {
 
     private final UserRepo userRepo;
@@ -15,6 +14,11 @@ public class MainController {
     @Autowired
     public MainController(UserRepo userRepo) {
         this.userRepo = userRepo;
+    }
+
+    @PostMapping("/user")
+    public void test(@RequestParam String name){
+        System.out.println(name);
     }
 
     @PostMapping("/add")
