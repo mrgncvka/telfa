@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -30,6 +31,7 @@ public class UserService implements UserDetailsService {
         if (user == null)
             throw new UsernameNotFoundException("Not found");
         return user;
+
     }
 
     public boolean save(User user) {
