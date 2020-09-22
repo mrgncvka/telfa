@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String processToken(User user) {
-        String token = jwtUtil.generateToken(user);
+        String token = jwtUtil.generateToken(user.getUsername());
         user.setToken(token);
         userRepo.save(user);
         return token;
