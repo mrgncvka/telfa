@@ -2,11 +2,11 @@ package base.filters;
 
 import base.service.UserService;
 import base.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -20,16 +20,14 @@ import static base.config.SecurityConstants.TOKEN_PREFIX;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    @Autowired
-    private  JwtUtil jwtUtil;
-    @Autowired
+    private JwtUtil jwtUtil;
     private  UserService userService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
         super(authenticationManager);
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -42,7 +40,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(header);
-
+//        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
 
@@ -52,7 +50,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
        UserDetails userDetails = userService.loadUserByUsername(jwtUtil.extractUsername(header.replace(TOKEN_PREFIX, "")));
        if (userDetails != null)
-           return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword());
+           return new UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
        return null;
     }
 }

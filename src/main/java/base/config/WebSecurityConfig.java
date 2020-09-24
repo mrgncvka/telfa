@@ -2,8 +2,8 @@ package base.config;
 
 import base.filters.JwtAuthenticationFilter;
 import base.filters.JwtAuthorizationFilter;
-import base.filters.JwtRequestFilter;
 import base.service.UserService;
+import base.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -14,21 +14,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
-    private final JwtRequestFilter jwtRequestFilter;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
     private final String[] patterns = new String[]{"/authenticate", "/register", "/user", "/registration"};
 
     @Autowired
-    public WebSecurityConfig(UserService userService, JwtRequestFilter jwtRequestFilter, PasswordEncoder passwordEncoder) {
+    public WebSecurityConfig(UserService userService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userService = userService;
-        this.jwtRequestFilter = jwtRequestFilter;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -53,8 +52,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/registration").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManagerBean()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManagerBean()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManagerBean(), jwtUtil))
+                .addFilter(new JwtAuthorizationFilter(authenticationManagerBean(), jwtUtil, userService))
                 // this disables session creation on Spring Security
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
