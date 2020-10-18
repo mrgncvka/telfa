@@ -3,12 +3,10 @@ package base.filters;
 import base.model.User;
 import base.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -20,13 +18,12 @@ import java.io.IOException;
 import static base.config.SecurityConstants.HEADER_STRING;
 import static base.config.SecurityConstants.TOKEN_PREFIX;
 
-public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
+public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    @Autowired
-    public JwtAuthFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
     }
@@ -35,7 +32,6 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
-
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),
                     user.getPassword()));
         } catch (IOException e) {
